@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
@@ -62,11 +63,11 @@ export function PortfolioHome() {
   const prefersReducedMotion = useReducedMotion();
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     if (typeof window === "undefined") {
-      return "dark";
+      return "light";
     }
 
     const saved = window.localStorage.getItem("portfolio-theme");
-    return saved === "light" || saved === "dark" ? saved : "dark";
+    return saved === "light" || saved === "dark" ? saved : "light";
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -255,51 +256,17 @@ export function PortfolioHome() {
               initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="relative"
+              className="relative mx-auto w-full max-w-md"
             >
-              <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-sky-950/30">
-                <div className="rounded-[1.5rem] border border-sky-400/30 bg-slate-900/80 p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
-                      <Cpu className="h-4 w-4 text-sky-300" />
-                      Systems
-                    </div>
-                    <div className="flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-sky-300">
-                      Build · Learn · Ship
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500/15 text-sky-300">
-                        <Code2 className="h-5 w-5" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-white">Code</h3>
-                      <p className="mt-2 text-sm text-slate-300">Software products, interfaces, and system-level engineering.</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/15 text-violet-300">
-                        <BrainCircuit className="h-5 w-5" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-white">AI</h3>
-                      <p className="mt-2 text-sm text-slate-300">Machine learning workflows, predictive systems, and intelligent tools.</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
-                        <Zap className="h-5 w-5" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-white">Data</h3>
-                      <p className="mt-2 text-sm text-slate-300">Analytics, feature pipelines, and meaningful insights from real data.</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
-                        <Layers3 className="h-5 w-5" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-white">Engineering</h3>
-                      <p className="mt-2 text-sm text-slate-300">Architectural thinking, clean interfaces, and scalable systems.</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="overflow-hidden bg-transparent">
+                <Image
+                  src="/images/profile-photo.jpg"
+                  alt="Nikhil Raj profile portrait"
+                  width={720}
+                  height={900}
+                  className="h-[500px] w-full object-cover object-center"
+                  priority
+                />
               </div>
             </motion.div>
           </div>
