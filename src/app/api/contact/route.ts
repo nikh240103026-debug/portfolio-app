@@ -4,10 +4,20 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 
 const schema = z.object({
-  name: z.string().min(1),
-  email: z.email(),
-  subject: z.string().min(1),
-  message: z.string().min(10),
+  name: z.string().trim().min(2).max(100),
+  email: z.email().max(254),
+  inquiryType: z.enum([
+    "Project collaboration",
+    "Freelance or contract",
+    "Job opportunity",
+    "Technical question",
+    "Other",
+  ]),
+  subject: z.string().trim().min(3).max(160),
+  message: z.string().trim().min(20).max(5000),
+  organization: z.string().trim().max(120),
+  budgetRange: z.enum(["Under INR 50,000", "INR 50,000-250,000", "INR 250,000+", "Not sure"]).or(z.literal("")),
+  timeline: z.enum(["As soon as possible", "Within 1 month", "Within 3 months", "Flexible"]).or(z.literal("")),
 });
 
 export async function POST(request: Request) {
@@ -17,7 +27,7 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Please provide a valid name, email, subject, and message." },
+        { error: "Please complete all required fields with valid information." },
         { status: 400 },
       );
     }
@@ -32,16 +42,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const contact = await prisma.contactMessage.create({
-      data: {
-        name: parsed.data.name,
-        email: parsed.data.email,
-        subject: parsed.data.subject,
-        message: parsed.data.message,
-      },
-    });
+    await prisma.contactMessage.create({ data: parsed.data });
 
-    return NextResponse.json({ success: true, contact });
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
       {

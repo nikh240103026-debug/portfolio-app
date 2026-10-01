@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Globe, Layers3 } from "lucide-react";
+import { ArrowLeft, Code2, ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { projects } from "@/data/portfolio";
@@ -22,128 +22,101 @@ export default async function ProjectDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-      <Link href="/projects" className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-sky-300">
-        <ArrowLeft className="h-4 w-4" />
-        Back to projects
-      </Link>
-
-      <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5">
-        <div className="relative h-56 border-b border-white/10 bg-gradient-to-br from-sky-500/20 via-slate-900 to-slate-950">
+    <main className="ibm-landing min-h-screen">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="relative h-[clamp(18rem,42vw,34rem)] overflow-hidden bg-[#101820]">
           {project.imageUrl ? (
             <Image
               src={project.imageUrl}
-              alt={`${project.title} dashboard`}
+              alt={`${project.title} platform screenshot`}
               fill
-              sizes="(max-width: 1152px) 100vw, 1152px"
-              className={project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
+              priority
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className={project.slug === "titanic-survival-predictor" ? "bg-[#101820] object-contain object-center" : project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
             />
-          ) : null}
-        </div>
-        <div className="p-6 sm:p-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <div className="text-xs uppercase tracking-[0.2em] text-sky-300">{project.category}</div>
-              <h1 className="mt-3 text-4xl font-semibold text-white">{project.title}</h1>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {project.githubUrl !== "[ADD GITHUB URL]" ? (
-                <a href={project.githubUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-100 hover:text-sky-300">
-                  <Globe className="h-4 w-4" /> GitHub
-                </a>
-              ) : null}
-              {project.liveUrl !== "#" ? (
-                <a href={project.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-4 py-2 text-sm font-medium text-sky-200 hover:text-sky-100">
-                  <ExternalLink className="h-4 w-4" /> Live Demo
-                </a>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-8">
-          <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-semibold text-white">Overview</h2>
-            <p className="mt-4 text-slate-300">{project.description}</p>
-          </section>
-
-          <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-semibold text-white">Problem</h2>
-            <p className="mt-4 text-slate-300">{project.problem}</p>
-          </section>
-
-          <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-semibold text-white">Solution</h2>
-            <p className="mt-4 text-slate-300">{project.solution}</p>
-          </section>
-
-          <section className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-semibold text-white">Architecture</h2>
-            <p className="mt-4 text-slate-300">{project.architecture}</p>
-            <div className="mt-6 rounded-[1.5rem] border border-dashed border-sky-400/30 bg-slate-950/60 p-5">
-              <div className="flex items-center gap-3 text-sky-300">
-                <Layers3 className="h-5 w-5" />
-                <span className="text-xs uppercase tracking-[0.2em]">Architecture diagram</span>
-              </div>
-              <div className="mt-5 grid gap-3 text-sm text-slate-200">
-                <div className="rounded-2xl border border-white/10 bg-slate-900 px-3 py-2">Input / Data Layer</div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900 px-3 py-2">Processing / Model / Logic</div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900 px-3 py-2">Decision / Output / Dashboard</div>
-              </div>
-            </div>
-          </section>
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${project.accent}`} />
+          )}
         </div>
 
-        <aside className="space-y-8">
-          <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-6">
-            <h3 className="text-xl font-semibold text-white">Technologies</h3>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.technologies.map((tech) => (
-                <span key={tech} className="rounded-full border border-sky-400/20 bg-sky-500/10 px-2.5 py-1 text-[11px] text-sky-200">
-                  {tech}
-                </span>
-              ))}
-            </div>
+        <header className="flex flex-col gap-6 py-8 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-3xl">
+            <div className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">{project.category}</div>
+            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-neutral-950 sm:text-5xl">{project.title}</h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-600">{project.shortDescription}</p>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {project.githubUrl !== "[ADD GITHUB URL]" ? (
+              <a href={project.githubUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border-b border-transparent py-2 text-sm font-medium text-neutral-900 transition-colors hover:border-cyan-800 hover:text-cyan-800">
+                <Code2 className="h-4 w-4" /> GitHub repository
+              </a>
+            ) : null}
+            {project.liveUrl !== "#" ? (
+              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border-b border-transparent py-2 text-sm font-medium text-neutral-900 transition-colors hover:border-cyan-800 hover:text-cyan-800">
+                <ExternalLink className="h-4 w-4" /> Live website
+              </a>
+            ) : null}
+          </div>
+        </header>
+
+        <div className="grid gap-14 py-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.8fr)]">
+          <div className="space-y-12">
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">Overview</h2>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-neutral-700">{project.description}</p>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">The challenge</h2>
+              <p className="mt-4 max-w-3xl leading-7 text-neutral-700">{project.problem}</p>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">The approach</h2>
+              <p className="mt-4 max-w-3xl leading-7 text-neutral-700">{project.solution}</p>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">Product architecture</h2>
+              <p className="mt-4 max-w-3xl leading-7 text-neutral-700">{project.architecture}</p>
+            </section>
+
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">Engineering considerations</h2>
+              <ul className="mt-4 space-y-3 leading-7 text-neutral-700">
+                {project.challenges.map((challenge) => <li key={challenge}>{challenge}</li>)}
+              </ul>
+            </section>
           </div>
 
-          <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-6">
-            <h3 className="text-xl font-semibold text-white">Key features</h3>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
-              {project.features.map((feature) => (
-                <li key={feature} className="flex gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-sky-300" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <aside className="space-y-12">
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">Core capabilities</h2>
+              <ul className="mt-4 space-y-3 leading-6 text-neutral-700">
+                {project.features.map((feature) => <li key={feature}>{feature}</li>)}
+              </ul>
+            </section>
 
-          <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-6">
-            <h3 className="text-xl font-semibold text-white">Challenges</h3>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
-              {project.challenges.map((challenge) => (
-                <li key={challenge} className="flex gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-violet-300" />
-                  <span>{challenge}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">Technology</h2>
+              <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-2 text-sm leading-6 text-neutral-700">
+                {project.technologies.map((tech) => <li key={tech}>{tech}</li>)}
+              </ul>
+            </section>
 
-          <div className="rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-6">
-            <h3 className="text-xl font-semibold text-white">What I learned</h3>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
-              {project.whatILearned.map((point) => (
-                <li key={point} className="flex gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </aside>
+            <section>
+              <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-800">What this project demonstrates</h2>
+              <ul className="mt-4 space-y-3 leading-6 text-neutral-700">
+                {project.whatILearned.map((point) => <li key={point}>{point}</li>)}
+              </ul>
+            </section>
+          </aside>
+        </div>
+
+        <Link href="/projects" className="inline-flex items-center gap-2 py-3 text-sm font-medium text-neutral-900 transition-colors hover:text-cyan-800">
+          <ArrowLeft className="h-4 w-4" />
+          Back to projects
+        </Link>
       </div>
     </main>
   );

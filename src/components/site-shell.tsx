@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, MotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   ArrowUp,
@@ -20,7 +20,8 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { FaGithub, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa6";
 
 import { siteConfig } from "@/config/site";
 import {
@@ -29,9 +30,9 @@ import {
   experience,
   navItems,
   profile,
+  suggestedPrompts,
   projects,
   skillGroups,
-  suggestedPrompts,
 } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +52,136 @@ function SectionHeading({
       </p>
       <h2 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">{title}</h2>
       <p className="mt-4 text-base text-slate-300 sm:text-lg">{description}</p>
+    </div>
+  );
+}
+
+function ShowcaseCard({
+  horizontalOffset,
+  alignment,
+  width,
+  reduceMotion,
+  children,
+}: {
+  horizontalOffset: MotionValue<number>;
+  alignment: number;
+  width: number;
+  reduceMotion: boolean;
+  children: (imageBrightness: MotionValue<string>) => ReactNode;
+}) {
+  const range = width * 1.4;
+  const input = [alignment - range, alignment, alignment + range];
+  const scale = useTransform(horizontalOffset, input, [0.98, 1.015, 0.98]);
+  const opacity = useTransform(horizontalOffset, input, [0.45, 1, 0.45]);
+  const imageBrightness = useTransform(horizontalOffset, input, ["brightness(0.8)", "brightness(1.04)", "brightness(0.8)"]);
+
+  return (
+    <motion.div
+      className="portfolio-showcase-card"
+      style={reduceMotion ? undefined : { scale, opacity }}
+      data-reduced-motion={reduceMotion}
+    >
+      {children(imageBrightness)}
+    </motion.div>
+  );
+}
+
+function HorizontalShowcase<T>({
+  items,
+  getKey,
+  renderItem,
+  label,
+  variant,
+}: {
+  items: T[];
+  getKey: (item: T) => string;
+  renderItem: (item: T, imageBrightness: MotionValue<string>) => ReactNode;
+  label: string;
+  variant: "projects" | "certificates";
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [travel, setTravel] = useState(0);
+  const [scrollHeight, setScrollHeight] = useState(0);
+  const [cardLayouts, setCardLayouts] = useState<{ alignment: number; width: number }[]>([]);
+  const reduceMotion = useReducedMotion() === true;
+  const { scrollYProgress } = useScroll({
+    target: scrollRef,
+    offset: ["start start", "end end"],
+  });
+  const horizontalOffset = useTransform(scrollYProgress, [0, 1], [0, -travel]);
+
+  useEffect(() => {
+    const scrollSection = scrollRef.current;
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+
+    if (!scrollSection || !viewport || !track || reduceMotion) return;
+
+    const measure = () => {
+      const maxTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const layouts = Array.from(track.children).map((child) => {
+        const card = child as HTMLElement;
+        const width = card.offsetWidth;
+        return {
+          alignment: viewport.clientWidth / 2 - (card.offsetLeft + width / 2),
+          width,
+        };
+      });
+
+      setTravel(maxTravel);
+      setScrollHeight(window.innerHeight + maxTravel);
+      setCardLayouts(layouts);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(track);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [items.length, reduceMotion]);
+
+  return (
+    <div
+      ref={scrollRef}
+      className={`portfolio-showcase-scroll portfolio-showcase-${variant}`}
+      style={{ height: reduceMotion ? "auto" : scrollHeight ? `${scrollHeight}px` : "100vh" }}
+    >
+      <div
+        ref={viewportRef}
+        className="portfolio-showcase-viewport"
+        data-reduced-motion={reduceMotion}
+        role="region"
+        aria-label={label}
+      >
+        <motion.div
+          ref={trackRef}
+          className="portfolio-showcase-track"
+          style={reduceMotion ? undefined : { x: horizontalOffset }}
+          data-reduced-motion={reduceMotion}
+        >
+          {items.map((item, index) => {
+            const layout = cardLayouts[index] ?? { alignment: 0, width: 400 };
+            return (
+              <ShowcaseCard
+                key={getKey(item)}
+                horizontalOffset={horizontalOffset}
+                alignment={layout.alignment}
+                width={layout.width}
+                reduceMotion={reduceMotion}
+              >
+                {(imageBrightness) => renderItem(item, imageBrightness)}
+              </ShowcaseCard>
+            );
+          })}
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -89,8 +220,6 @@ export function PortfolioHome() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const featuredProjects = useMemo(() => projects.filter((project) => project.featured), []);
 
   const sendPrompt = async (promptText?: string) => {
     const text = (promptText ?? chatInput).trim();
@@ -344,68 +473,65 @@ export function PortfolioHome() {
         </section>
 
         <section id="projects" className="scroll-mt-24 py-16">
-          <div className="flex items-end justify-between gap-6">
-            <SectionHeading
-              eyebrow="Projects"
-              title="Real systems, research-driven work, and product thinking"
-              description="I build projects that sit at the intersection of software engineering, AI, and real-world utility."
-            />
-            <Link href="/projects" className="hidden items-center gap-2 text-sm font-medium text-sky-300 md:inline-flex">
-              Explore all projects <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-3">
-            {featuredProjects.map((project) => (
-              <motion.article
-                key={project.slug}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
-                whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                whileHover={prefersReducedMotion ? undefined : { y: -6 }}
-                className="group overflow-hidden rounded-none border border-white/10 bg-white/5"
-              >
-                <div className={cn("relative h-40 border-b border-white/10 bg-gradient-to-br", project.accent)}>
-                  {project.imageUrl ? (
-                    <Image
-                      src={project.imageUrl}
-                      alt={`${project.title} dashboard`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 33vw"
-                      className={project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
-                    />
-                  ) : null}
-                </div>
-                <div className="p-5">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-slate-300">
-                      {project.category}
-                    </span>
-                    <span className="text-xs text-slate-400">{project.status}</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">{project.shortDescription}</p>
-                  <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1">
-                    {project.technologies.slice(0, 3).map((tech) => (
-                      <span key={tech} className="text-[11px] text-slate-200">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-5 flex items-center justify-between text-sm">
-                    <Link href={`/projects/${project.slug}`} className="inline-flex items-center gap-2 font-medium text-sky-300">
-                      View details <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    {project.githubUrl !== "[ADD GITHUB URL]" ? (
-                      <a href={project.githubUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-slate-300">
-                        <Globe className="h-4 w-4" />
-                      </a>
+          <SectionHeading
+            eyebrow="Projects"
+            title="Real systems, research-driven work, and product thinking"
+            description="I build projects that sit at the intersection of software engineering, AI, and real-world product development."
+          />
+          <HorizontalShowcase
+            items={projects}
+            getKey={(project) => project.slug}
+            label="Portfolio projects"
+            variant="projects"
+            renderItem={(project, imageBrightness) => (
+              <article className="group relative h-full overflow-hidden rounded-none border border-white/10 bg-white/5">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  aria-label={`View ${project.title} project details`}
+                  className="absolute inset-0 z-10"
+                />
+                <div className="pointer-events-none relative z-20">
+                  <div className={cn("relative h-44 border-b border-white/10 bg-gradient-to-br", project.accent)}>
+                    {project.imageUrl ? (
+                      <motion.div className="absolute inset-0" style={{ filter: imageBrightness }}>
+                        <Image
+                          src={project.imageUrl}
+                          alt={`${project.title} dashboard`}
+                          fill
+                          quality={100}
+                          sizes="(max-width: 1024px) 70vw, 608px"
+                          className={project.slug === "titanic-survival-predictor" ? "bg-[#101820] object-contain object-center" : project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
+                        />
+                      </motion.div>
                     ) : null}
                   </div>
+                  <div className="p-5 sm:p-6">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-slate-300">{project.category}</span>
+                      <span className="text-xs text-slate-400">{project.status}</span>
+                    </div>
+                    <h3 className="text-2xl font-semibold text-white">{project.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">{project.shortDescription}</p>
+                    <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1">
+                      {project.technologies.slice(0, 4).map((tech) => (
+                        <span key={tech} className="text-xs text-slate-200">{tech}</span>
+                      ))}
+                    </div>
+                    <div className="mt-5 flex items-center justify-between text-sm">
+                      <span className="inline-flex items-center gap-2 font-medium text-sky-300">
+                        View project <ArrowRight className="h-4 w-4" />
+                      </span>
+                      {project.githubUrl !== "[ADD GITHUB URL]" ? (
+                        <a href={project.githubUrl} target="_blank" rel="noreferrer" aria-label={`${project.title} on GitHub`} className="pointer-events-auto">
+                          <Globe className="h-4 w-4 text-slate-300" />
+                        </a>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
-              </motion.article>
-            ))}
-          </div>
+              </article>
+            )}
+          />
         </section>
 
         <section id="experience" className="scroll-mt-24 py-16">
@@ -441,34 +567,45 @@ export function PortfolioHome() {
         <section id="certifications" className="scroll-mt-24 py-16">
           <SectionHeading
             eyebrow="Certifications"
-            title="A clean, updatable record of learning"
-            description="Certification entries are intentionally structured so they can be replaced with real credentials when they become available."
+            title="Certificates and programs"
+            description="A record of learning, participation, and applied project experience."
           />
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {certifications.map((item) => (
-              <div key={item.title} className="overflow-hidden rounded-none border border-white/10 bg-white/5">
-                <div className="flex h-40 items-center justify-center border-b border-white/10 bg-gradient-to-br from-sky-500/10 via-slate-900 to-slate-950">
-                  <div className="rounded-none border border-dashed border-sky-400/30 bg-slate-950/60 px-4 py-3 text-xs uppercase tracking-[0.2em] text-sky-300">
-                    Certificate
-                  </div>
+          <HorizontalShowcase
+            items={certifications}
+            getKey={(item) => item.title}
+            label="Certificates"
+            variant="certificates"
+            renderItem={(item) => (
+              <article className="h-full overflow-hidden rounded-none border border-white/10 bg-white/5">
+                <div className="relative aspect-[16/9] bg-white">
+                  {item.certificateImage ? (
+                    <Image
+                      src={item.certificateImage}
+                      alt={`${item.title} certificate`}
+                      fill
+                      sizes="(max-width: 1024px) 80vw, 736px"
+                      className="object-contain"
+                    />
+                  ) : null}
                 </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+                <div className="p-5 sm:p-6">
+                  <h3 className="text-xl font-semibold text-white">{item.title}</h3>
                   <p className="mt-2 text-sm text-slate-300">{item.issuer}</p>
-                  <p className="mt-1 text-sm text-slate-400">{item.date}</p>
-                  {item.credentialId !== "[ADD CREDENTIAL ID]" ? (
+                  {item.date ? <p className="mt-1 text-sm text-slate-400">{item.date}</p> : null}
+                  <p className="mt-3 text-sm leading-6 text-slate-300">{item.description}</p>
+                  {item.credentialId && item.credentialId !== "[ADD CREDENTIAL ID]" ? (
                     <p className="mt-2 text-xs uppercase tracking-[0.2em] text-slate-400">ID: {item.credentialId}</p>
                   ) : null}
-                  {item.credentialUrl !== "[ADD URL]" ? (
+                  {item.credentialUrl && item.credentialUrl !== "[ADD URL]" ? (
                     <a href={item.credentialUrl} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-sky-300">
                       View credential <ExternalLink className="h-4 w-4" />
                     </a>
                   ) : null}
                 </div>
-              </div>
-            ))}
-          </div>
+              </article>
+            )}
+          />
         </section>
 
         <section id="contact" className="scroll-mt-24 py-16">
@@ -505,14 +642,17 @@ export function PortfolioHome() {
               <div className="pt-2">
                 <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Connect</div>
                 <div className="mt-4 flex flex-wrap gap-3">
-                  <a href={siteConfig.social.github} target="_blank" rel="noreferrer" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
-                    <Globe className="h-4 w-4" />
+                  <a href={siteConfig.social.github} target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
+                    <FaGithub className="h-4 w-4" />
                   </a>
-                  <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
-                    <BriefcaseBusiness className="h-4 w-4" />
+                  <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
+                    <FaLinkedin className="h-4 w-4" />
                   </a>
-                  <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
-                    <Sparkles className="h-4 w-4" />
+                  <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" title="Instagram" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
+                    <FaInstagram className="h-4 w-4" />
+                  </a>
+                  <a href={siteConfig.social.youtube} target="_blank" rel="noreferrer" aria-label="YouTube" title="YouTube" className="rounded-none border border-white/10 bg-slate-900 p-3 text-slate-100 transition hover:border-sky-400/40 hover:text-sky-300">
+                    <FaYoutube className="h-4 w-4" />
                   </a>
                 </div>
               </div>
@@ -547,11 +687,21 @@ export function PortfolioHome() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-slate-400 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <p>© 2026 {siteConfig.name}. Built with Next.js and a product-focused engineering mindset.</p>
           <div className="flex items-center gap-4">
-            <a href={siteConfig.social.github} target="_blank" rel="noreferrer" className="hover:text-sky-300">
+            <a href={siteConfig.social.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-sky-300">
+              <FaGithub className="h-4 w-4" />
               GitHub
             </a>
-            <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="hover:text-sky-300">
+            <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-sky-300">
+              <FaLinkedin className="h-4 w-4" />
               LinkedIn
+            </a>
+            <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-sky-300">
+              <FaInstagram className="h-4 w-4" />
+              Instagram
+            </a>
+            <a href={siteConfig.social.youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-sky-300">
+              <FaYoutube className="h-4 w-4" />
+              YouTube
             </a>
             <a href="#home" className="hover:text-sky-300">
               Back to top
@@ -650,16 +800,27 @@ export function PortfolioHome() {
 }
 
 function ContactForm() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const emptyForm = {
+    name: "",
+    email: "",
+    inquiryType: "",
+    subject: "",
+    message: "",
+    organization: "",
+    budgetRange: "",
+    timeline: "",
+  };
+  const [form, setForm] = useState(emptyForm);
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message: string }>({
     type: "idle",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (field: keyof typeof form) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((current) => ({ ...current, [field]: event.target.value }));
-  };
+  const handleChange = (field: keyof typeof emptyForm) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setForm((current) => ({ ...current, [field]: event.target.value }));
+    };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -678,8 +839,8 @@ function ContactForm() {
         throw new Error(data.error ?? "Unable to send your message right now.");
       }
 
-      setStatus({ type: "success", message: "Your message has been sent successfully." });
-      setForm({ name: "", email: "", subject: "", message: "" });
+      setStatus({ type: "success", message: "Thanks. Your message is saved and I’ll get back to you." });
+      setForm(emptyForm);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Something went wrong.";
       setStatus({ type: "error", message });
@@ -690,11 +851,14 @@ function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="rounded-none border border-white/10 bg-slate-900/80 p-6">
+      <p className="mb-5 text-xs text-slate-400"><span className="text-sky-300">*</span> Required</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm text-slate-200">
-          <span className="mb-2 block">Name</span>
+          <span className="mb-2 block">Name <span className="text-sky-300">*</span></span>
           <input
             required
+            minLength={2}
+            maxLength={100}
             value={form.name}
             onChange={handleChange("name")}
             className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50"
@@ -702,10 +866,11 @@ function ContactForm() {
           />
         </label>
         <label className="block text-sm text-slate-200">
-          <span className="mb-2 block">Email</span>
+          <span className="mb-2 block">Email <span className="text-sky-300">*</span></span>
           <input
             required
             type="email"
+            maxLength={254}
             value={form.email}
             onChange={handleChange("email")}
             className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50"
@@ -714,10 +879,41 @@ function ContactForm() {
         </label>
       </div>
 
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm text-slate-200">
+          <span className="mb-2 block">What can I help with? <span className="text-sky-300">*</span></span>
+          <select
+            required
+            value={form.inquiryType}
+            onChange={handleChange("inquiryType")}
+            className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-sky-400/50"
+          >
+            <option value="" disabled>Select a reason</option>
+            <option>Project collaboration</option>
+            <option>Freelance or contract</option>
+            <option>Job opportunity</option>
+            <option>Technical question</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label className="block text-sm text-slate-200">
+          <span className="mb-2 block">Organization <span className="text-slate-500">Optional</span></span>
+          <input
+            maxLength={120}
+            value={form.organization}
+            onChange={handleChange("organization")}
+            className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50"
+            placeholder="Company, team, or school"
+          />
+        </label>
+      </div>
+
       <label className="mt-4 block text-sm text-slate-200">
-        <span className="mb-2 block">Subject</span>
+        <span className="mb-2 block">Subject <span className="text-sky-300">*</span></span>
         <input
           required
+          minLength={3}
+          maxLength={160}
           value={form.subject}
           onChange={handleChange("subject")}
           className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50"
@@ -725,15 +921,48 @@ function ContactForm() {
         />
       </label>
 
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm text-slate-200">
+          <span className="mb-2 block">Budget range <span className="text-slate-500">Optional</span></span>
+          <select
+            value={form.budgetRange}
+            onChange={handleChange("budgetRange")}
+            className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-sky-400/50"
+          >
+            <option value="">Prefer not to say</option>
+            <option>Under INR 50,000</option>
+            <option>INR 50,000-250,000</option>
+            <option>INR 250,000+</option>
+            <option>Not sure</option>
+          </select>
+        </label>
+        <label className="block text-sm text-slate-200">
+          <span className="mb-2 block">Timeline <span className="text-slate-500">Optional</span></span>
+          <select
+            value={form.timeline}
+            onChange={handleChange("timeline")}
+            className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-sky-400/50"
+          >
+            <option value="">No fixed timeline</option>
+            <option>As soon as possible</option>
+            <option>Within 1 month</option>
+            <option>Within 3 months</option>
+            <option>Flexible</option>
+          </select>
+        </label>
+      </div>
+
       <label className="mt-4 block text-sm text-slate-200">
-        <span className="mb-2 block">Message</span>
+        <span className="mb-2 block">Message <span className="text-sky-300">*</span></span>
         <textarea
           required
+          minLength={20}
+          maxLength={5000}
           value={form.message}
           onChange={handleChange("message")}
           rows={5}
           className="w-full rounded-none border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-sky-400/50"
-          placeholder="Tell me about your idea, question, or project."
+          placeholder="Share the context, goal, and any important details."
         />
       </label>
 
@@ -801,16 +1030,20 @@ export function ContactPageSection() {
             <a href={`mailto:${siteConfig.email}`} className="text-slate-200 hover:text-sky-300">{siteConfig.email}</a>
           </div>
           <div className="flex items-center gap-3">
-            <Phone className="h-5 w-5 text-sky-300" />
-            <a href={`tel:${siteConfig.phone}`} className="text-slate-200 hover:text-sky-300">{siteConfig.phone}</a>
-          </div>
-          <div className="flex items-center gap-3">
-            <Globe className="h-5 w-5 text-sky-300" />
+            <FaGithub className="h-5 w-5 text-sky-300" />
             <a href={siteConfig.social.github} target="_blank" rel="noreferrer" className="text-slate-200 hover:text-sky-300">GitHub</a>
           </div>
           <div className="flex items-center gap-3">
-            <BriefcaseBusiness className="h-5 w-5 text-sky-300" />
+            <FaLinkedin className="h-5 w-5 text-sky-300" />
             <a href={siteConfig.social.linkedin} target="_blank" rel="noreferrer" className="text-slate-200 hover:text-sky-300">LinkedIn</a>
+          </div>
+          <div className="flex items-center gap-3">
+            <FaInstagram className="h-5 w-5 text-sky-300" />
+            <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" className="text-slate-200 hover:text-sky-300">Instagram</a>
+          </div>
+          <div className="flex items-center gap-3">
+            <FaYoutube className="h-5 w-5 text-sky-300" />
+            <a href={siteConfig.social.youtube} target="_blank" rel="noreferrer" className="text-slate-200 hover:text-sky-300">YouTube</a>
           </div>
         </div>
         <ContactForm />

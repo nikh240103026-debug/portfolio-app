@@ -27,8 +27,9 @@ export default function ProjectsPage() {
                   src={project.imageUrl}
                   alt={`${project.title} dashboard`}
                   fill
+                  quality={100}
                   sizes="(max-width: 1024px) 100vw, 33vw"
-                  className={project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
+                  className={project.slug === "titanic-survival-predictor" ? "bg-[#101820] object-contain object-center" : project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
                 />
               ) : null}
             </div>

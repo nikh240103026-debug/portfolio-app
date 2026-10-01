@@ -1,3 +1,5 @@
+import type { CertificationType } from "@/types/certification";
+
 export type Project = {
   title: string;
   slug: string;
@@ -110,36 +112,44 @@ export const projects: Project[] = [
     slug: "quantum-learning-ai",
     imageUrl: "/images/Screenshot%202026-10-01%20225953.png",
     shortDescription:
-      "AI-powered educational platform for quantum computing concepts and interactive learning.",
+      "An AI-powered quantum computing learning platform combining curriculum, circuit building, simulation, visualization, practice, and contextual tutoring.",
     description:
-      "An educational experience combining AI explanations, practice workflows, and guided learning around quantum computing concepts.",
+      "QuantumLearn AI is a full-stack learning platform for students, researchers, educators, and professionals. It brings structured lessons, hands-on quantum tools, practice, and personalized AI assistance into one experience, guiding learners from concept to circuit, simulation, practice, and feedback.",
     problem:
-      "Quantum computing education is often abstract and difficult for learners to engage with in a practical way.",
+      "Learners often have to move between mathematical theory, lectures, circuit diagrams, programming environments, simulators, documentation, practice resources, and separate AI tools. This fragmented experience makes it difficult to connect abstract quantum concepts with practical implementation.",
     solution:
-      "The platform uses guided explanations, learning pathways, and practice features to make quantum topics more accessible and interactive.",
+      "A progressive curriculum is integrated with interactive multi-qubit circuit construction, simulation, quantum-state and measurement visualization, structured practice, and a contextual AI Tutor. The learning loop is Learn, Build, Simulate, Visualize, Practice, Ask AI, and Improve.",
     architecture:
-      "Content-driven learning system with user interactions, AI explanations, and modular practice flow built for educational clarity.",
-    technologies: ["Next.js", "TypeScript", "AI", "Education UX", "Python", "Data Visualization"],
-    githubUrl: "[ADD GITHUB URL]",
-    liveUrl: "#",
+      "The Next.js 16, React, and TypeScript frontend connects to server-side APIs for AI tutoring, lesson assistance, and platform workflows. Supabase provides authentication and PostgreSQL storage with Row Level Security for user-specific data. Google Gemini powers AI learning assistance, while the Quantum Lab connects circuit construction to simulation and result visualization.",
+    technologies: ["Next.js 16", "React", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "Google Gemini API", "Quantum Simulation", "REST APIs", "React Markdown", "remark-gfm", "Lucide React"],
+    githubUrl: "https://github.com/nikh240103026-debug/quantumlearn-ai",
+    liveUrl: "https://quantumlearnai.vercel.app/",
     featured: true,
     category: "AI / Education",
     status: "Prototype",
     features: [
-      "Interactive learning modules",
-      "AI explanations",
-      "Personalized learning flow",
-      "Quantum circuit experimentation",
+      "Structured curriculum with lessons and chapters that progress from concepts to examples and practice",
+      "Interactive multi-qubit Quantum Lab with X, Y, Z, H, S, T, CNOT, CZ, and SWAP gates",
+      "Circuit simulation with immediate results, quantum-state feedback, measurement outcomes, and probability visualizations",
+      "Contextual AI Tutor with continuing conversations, multiple threads, and conversation history",
+      "AI lesson assistance, concept clarification, and practice guidance integrated into the learning workflow",
+      "Lesson- and chapter-based practice with difficulty levels, answer evaluation, scores, percentages, and progress feedback",
+      "Personalized dashboard for learning progress, roadmap, practice activity, resources, and Quantum Lab access",
+      "User accounts with personalized learning activity, tutor conversations, practice results, and settings",
+      "Administrative interface for managing platform resources and educational content",
     ],
     challenges: [
-      "Simplifying complex quantum explanations",
-      "Structuring educational content clearly",
-      "Designing useful practice loops",
+      "Connecting curriculum, interactive circuits, simulation, visualization, and practice into one coherent learning flow",
+      "Protecting user-specific data with server-side authentication, authorization checks, and Supabase Row Level Security",
+      "Handling AI timeouts, retries, API failures, input validation, and protected server routes reliably",
+      "Managing interactive circuit state, simulation results, and clear loading and error states",
+      "Supporting persistent AI conversations and isolated learning data for individual accounts",
     ],
     whatILearned: [
-      "Product-minded learning design",
-      "AI-assisted educational UX",
-      "Combining technical depth with usability",
+      "How to connect abstract quantum concepts with circuits, simulation, visualization, and hands-on practice",
+      "How contextual AI assistance can support lessons as part of a learning product rather than a separate chatbot",
+      "How authentication, user-specific data, AI services, and quantum simulation fit into a full-stack product architecture",
+      "How a unified learning loop can make advanced topics more approachable and actionable",
     ],
     accent: "from-violet-500/25 via-fuchsia-500/10 to-transparent",
   },
@@ -184,6 +194,7 @@ export const projects: Project[] = [
   {
     title: "Customer Segmentation System",
     slug: "customer-segmentation-system",
+    imageUrl: "/images/Customer%20Segmentation%20Dashboard%20Showcase.png",
     shortDescription:
       "Data science project for grouping customers based on behavior and demographic characteristics.",
     description:
@@ -221,6 +232,7 @@ export const projects: Project[] = [
   {
     title: "Loan Prediction",
     slug: "loan-prediction",
+    imageUrl: "/images/Loan%20Prediction%20System%20Dashboard.png",
     shortDescription:
       "Machine learning application for predicting loan approval outcomes based on applicant attributes.",
     description:
@@ -258,6 +270,7 @@ export const projects: Project[] = [
   {
     title: "Credit Default Risk",
     slug: "credit-default-risk",
+    imageUrl: "/images/Credit%20Risk%20Dashboard%20Showcase.png",
     shortDescription:
       "Risk modeling project focused on evaluating default probability and borrower risk signals.",
     description:
@@ -295,6 +308,7 @@ export const projects: Project[] = [
   {
     title: "Titanic Survival Predictor",
     slug: "titanic-survival-predictor",
+    imageUrl: "/images/titanic-survival-predictor.png",
     shortDescription:
       "Classification project for predicting survival outcomes from historical Titanic data.",
     description:
@@ -376,30 +390,39 @@ export const achievements = [
   },
 ];
 
-export const certifications = [
+export const certifications: CertificationType[] = [
   {
-    title: "[ADD YOUR CERTIFICATION]",
-    issuer: "[ADD ISSUER]",
-    date: "[ADD DATE]",
-    credentialId: "[ADD CREDENTIAL ID]",
-    credentialUrl: "[ADD URL]",
-    certificateImage: "/images/certificate-placeholder.svg",
+    title: "eDC's Blueprint 6.0",
+    issuer: "Indian Institute of Technology Delhi · Unstop Holiday Fest",
+    date: "2025",
+    description:
+      "Certificate of Participation for joining eDC's Blueprint 6.0 during Unstop Holiday Fest 2025 as a student from IIIT Senapati, Manipur.",
+    certificateImage: "/images/certificates/certificateEDCIITD.jpg",
   },
   {
-    title: "[ADD YOUR CERTIFICATION]",
-    issuer: "[ADD ISSUER]",
-    date: "[ADD DATE]",
-    credentialId: "[ADD CREDENTIAL ID]",
-    credentialUrl: "[ADD URL]",
-    certificateImage: "/images/certificate-placeholder.svg",
+    title: "GDG on Campus Solution Challenge",
+    issuer: "Google Developer Groups On Campus · Hack2skill",
+    date: "",
+    description:
+      "Certificate of Achievement recognizing initiative and contribution to the GDG on Campus Solution Challenge.",
+    credentialId: "2025H2SOLGSC-106840",
+    certificateImage: "/images/certificates/certificateGDG.jpg",
   },
   {
-    title: "[ADD YOUR CERTIFICATION]",
-    issuer: "[ADD ISSUER]",
-    date: "[ADD DATE]",
-    credentialId: "[ADD CREDENTIAL ID]",
-    credentialUrl: "[ADD URL]",
-    certificateImage: "/images/certificate-placeholder.svg",
+    title: "Investment Banking Job Simulation",
+    issuer: "J.P. Morgan · Forage",
+    date: "July 18, 2026",
+    description:
+      "Certificate of Completion. Completed practical tasks in M&A target research, auction-process analysis, financial analysis, and investment recommendations.",
+    certificateImage: "/images/certificates/certificateJPM.jpg",
+  },
+  {
+    title: "NationBuilding Case Study Competition 2026",
+    issuer: "Nation With NAMO · Unstop",
+    date: "January 18, 2026",
+    description:
+      "Certificate of Participation in the Presentation Submission Round of the NationBuilding Case Study Competition 2026.",
+    certificateImage: "/images/certificates/certificateNationBuildingHackathon.jpg",
   },
 ];
 

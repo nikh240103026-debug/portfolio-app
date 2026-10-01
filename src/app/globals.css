@@ -350,6 +350,71 @@ body {
   font-weight: 600;
 }
 
+.portfolio-showcase-scroll {
+  position: relative;
+  max-width: 100%;
+  overflow: clip;
+}
+
+.portfolio-showcase-viewport {
+  position: sticky;
+  top: 78px;
+  display: flex;
+  align-items: center;
+  height: calc(100vh - 78px);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+
+.portfolio-showcase-track {
+  position: relative;
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding-inline: 10vw;
+  will-change: transform;
+}
+
+.portfolio-showcase-card {
+  width: min(70vw, 38rem);
+  flex: 0 0 auto;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.portfolio-showcase-certificates .portfolio-showcase-card {
+  width: min(74vw, 22rem);
+}
+
+.portfolio-showcase-viewport[data-reduced-motion="true"] {
+  position: static;
+  height: auto;
+  overflow: visible;
+  mask-image: none;
+}
+
+.portfolio-showcase-track[data-reduced-motion="true"] {
+  width: 100%;
+  overflow-x: auto;
+  padding-inline: 10vw;
+  scroll-snap-type: x mandatory;
+}
+
+.portfolio-showcase-card[data-reduced-motion="true"] {
+  scroll-snap-align: center;
+}
+
+@media (min-width: 920px) {
+  .portfolio-showcase-track {
+    padding-inline: max(1.5rem, calc((100vw - 38rem) / 2));
+  }
+}
+
+.portfolio-showcase-track[data-reduced-motion="true"] .portfolio-showcase-card {
+  scroll-snap-align: center;
+}
+
 .ibm-mobile-nav {
   border-top: 1px solid rgba(17, 24, 39, 0.14);
   background: rgba(255,255,255,0.96);
@@ -389,9 +454,13 @@ html.light .ibm-landing {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .ibm-header-inner {
     padding: 0 1rem;
+  }
+
+  .ibm-nav {
+    display: none;
   }
 
   .ibm-main {

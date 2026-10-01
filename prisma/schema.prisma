@@ -46,11 +46,17 @@ model Certification {
 }
 
 model ContactMessage {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  subject   String
-  message   String
-  createdAt DateTime @default(now())
-  status    String   @default("new")
+  id           String    @id @default(cuid())
+  name         String
+  email        String
+  inquiryType  String    @default("General inquiry")
+  subject      String
+  message      String
+  organization String?
+  budgetRange  String?
+  timeline     String?
+  responseText String?
+  createdAt    DateTime  @default(now())
+  respondedAt  DateTime?
+  status       String    @default("new")
 }

@@ -34,3 +34,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Contact Inbox
+
+Contact submissions are stored in PostgreSQL through Prisma. Create a PostgreSQL database with a hosted provider (for example, Neon or Supabase), then copy `.env.example` to `.env.local` and set `DATABASE_URL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET`. Apply the schema locally with `npx prisma migrate deploy`. Production builds also apply pending migrations, so configure these values in Vercel before deploying.
+
+Portfolio content is versioned in `src/data/portfolio.ts` and ships with the app from GitHub. Contact messages are private runtime data stored in hosted PostgreSQL, not committed to GitHub; the deployed filesystem is not persistent storage. Never commit `.env.local` or database credentials.
+
+Generate a session secret with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Choose a strong, unique admin password. Open `/admin` to review messages.
+
+Reply drafts are saved with each message. “Open email draft” fills in the sender, subject, and response in your default mail app; send it there, then mark the message as replied in the inbox.
