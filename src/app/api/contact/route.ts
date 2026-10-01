@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { prisma } from "@/lib/db";
+import { sendContactEmails } from "@/lib/contact-email";
 
 const schema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -42,7 +43,13 @@ export async function POST(request: Request) {
       );
     }
 
-    await prisma.contactMessage.create({ data: parsed.data });
+    const savedMessage = await prisma.contactMessage.create({ data: parsed.data });
+
+    try {
+      await sendContactEmails({ ...parsed.data, id: savedMessage.id });
+    } catch {
+      console.error("Contact email delivery failed after the message was saved.");
+    }
 
     return NextResponse.json({ success: true });
   } catch {

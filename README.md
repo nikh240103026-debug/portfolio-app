@@ -44,3 +44,7 @@ Portfolio content is versioned in `src/data/portfolio.ts` and ships with the app
 Generate a session secret with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Choose a strong, unique admin password. Open `/admin` to review messages.
 
 Reply drafts are saved with each message. “Open email draft” fills in the sender, subject, and response in your default mail app; send it there, then mark the message as replied in the inbox.
+
+### Contact email automation
+
+The contact form can send an automatic acknowledgment to the sender and a new-request notification to the site owner. Create a Resend account, verify the domain used by `CONTACT_FROM_EMAIL`, and configure `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `CONTACT_NOTIFICATION_EMAIL` in `.env.local` and in the deployment environment. Set `CONTACT_AUTOREPLY_MESSAGE` to customize the acknowledgment. Email delivery is optional; a submission is still saved if email is not configured or delivery fails.
