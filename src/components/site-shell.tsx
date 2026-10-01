@@ -534,15 +534,17 @@ export function PortfolioHome() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-sky-300" />
-                <div>
-                  <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Phone</div>
-                  <a href={`tel:${siteConfig.phone}`} className="mt-1 text-slate-200 hover:text-sky-300">
-                    {siteConfig.phone}
-                  </a>
+              {siteConfig.phone ? (
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-sky-300" />
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Phone</div>
+                    <a href={`tel:${siteConfig.phone}`} className="mt-1 text-slate-200 hover:text-sky-300">
+                      {siteConfig.phone}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               <div className="pt-2">
                 <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Connect</div>
