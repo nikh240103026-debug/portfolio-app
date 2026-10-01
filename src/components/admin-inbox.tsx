@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Check, LogOut, Mail, RefreshCw, Send } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 
 type InboxMessage = {
   id: string;
@@ -27,6 +29,20 @@ const statusStyle: Record<string, string> = {
   draft: "text-amber-300",
   replied: "text-emerald-300",
 };
+
+function AdminHeader({ children }: { children: ReactNode }) {
+  return (
+    <header className="ibm-header sticky top-0 z-50">
+      <div className="ibm-header-inner">
+        <Link href="/" className="ibm-brand" aria-label="Nikhil Raj portfolio home">
+          <span className="ibm-brand-mark">N</span>
+          <span className="ibm-brand-name">Nikhil Raj</span>
+        </Link>
+        <div className="ibm-actions">{children}</div>
+      </div>
+    </header>
+  );
+}
 
 async function fetchInbox() {
   const response = await fetch("/api/admin/messages", { cache: "no-store" });
@@ -150,20 +166,35 @@ export function AdminInbox() {
     : undefined;
 
   if (mode === "checking") {
-    return <main className="min-h-screen bg-slate-950 px-6 py-16 text-slate-300">Loading inbox...</main>;
+    return (
+      <div className="ibm-landing admin-page min-h-screen">
+        <AdminHeader><span className="admin-header-label">Admin workspace</span></AdminHeader>
+        <main className="ibm-main px-6 py-16 text-slate-600">Loading inbox...</main>
+      </div>
+    );
   }
 
   if (mode === "login" || mode === "error") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12 text-slate-100">
-        <div className="w-full max-w-md border border-white/10 bg-slate-900 p-7">
-          <p className="text-xs uppercase tracking-[0.2em] text-sky-300">Nikhil Raj / Admin</p>
-          <h1 className="mt-4 text-3xl font-semibold">Contact inbox</h1>
+      <div className="ibm-landing admin-page min-h-screen">
+        <AdminHeader>
+          <Link href="/" className="admin-home-link">Portfolio home</Link>
+        </AdminHeader>
+        <main className="ibm-main admin-login-main">
+          <section className="admin-login-layout">
+            <div className="admin-login-copy">
+              <p className="ibm-eyebrow">Private workspace</p>
+              <h1 className="admin-login-title">Contact inbox</h1>
+              <p className="admin-login-summary">A focused place to review incoming messages and keep conversations moving.</p>
+            </div>
+            <div className="admin-login-panel">
+              <p className="admin-panel-eyebrow">Admin access</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[#161616]">Sign in</h2>
           {mode === "error" ? (
             <div role="alert" className="mt-5 border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-200">{error}</div>
           ) : (
             <form onSubmit={handleLogin} className="mt-6 space-y-4">
-              <label className="block text-sm text-slate-300">
+              <label className="block text-sm text-slate-600">
                 Admin password
                 <input
                   type="password"
@@ -171,38 +202,35 @@ export function AdminInbox() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  className="mt-2 w-full border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-sky-400/50"
+                  className="mt-2 w-full border border-black/20 bg-white px-3 py-3 text-[#161616] outline-none focus:border-sky-400/50"
                 />
               </label>
               {error ? <p role="alert" className="text-sm text-red-300">{error}</p> : null}
-              <button type="submit" disabled={isBusy} className="w-full bg-sky-400 px-4 py-3 font-medium text-slate-950 disabled:opacity-50">
+              <button type="submit" disabled={isBusy} className="ibm-primary-cta w-full disabled:opacity-50">
                 {isBusy ? "Signing in..." : "Sign in"}
               </button>
             </form>
           )}
-        </div>
-      </main>
+              <p className="mt-5 text-xs leading-5 text-slate-500">This area is only available to the site administrator.</p>
+            </div>
+          </section>
+        </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-8">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-sky-300">Nikhil Raj / Admin</p>
-          <h1 className="mt-1 text-2xl font-semibold">Contact inbox</h1>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => void refreshInbox()} disabled={isBusy} aria-label="Refresh inbox" title="Refresh inbox" className="border border-white/10 p-3 text-slate-200 hover:text-sky-300 disabled:opacity-50">
+    <div className="ibm-landing admin-page min-h-screen">
+      <AdminHeader>
+        <button onClick={() => void refreshInbox()} disabled={isBusy} aria-label="Refresh inbox" title="Refresh inbox" className="admin-icon-button disabled:opacity-50">
             <RefreshCw className="h-4 w-4" />
           </button>
-          <button onClick={() => void handleLogout()} className="inline-flex items-center gap-2 border border-white/10 px-3 py-2 text-sm hover:text-sky-300">
+          <button onClick={() => void handleLogout()} className="admin-secondary-button">
             <LogOut className="h-4 w-4" /> Sign out
           </button>
-        </div>
-      </header>
+      </AdminHeader>
 
-      <div className="grid min-h-[calc(100vh-77px)] lg:grid-cols-[20rem_minmax(0,1fr)]">
+      <div className="admin-inbox-layout grid min-h-[calc(100vh-78px)] lg:grid-cols-[20rem_minmax(0,1fr)]">
         <aside className="border-b border-white/10 lg:border-b-0 lg:border-r">
           <div className="flex gap-2 overflow-x-auto border-b border-white/10 px-4 py-3">
             {["all", "new", "read", "draft", "replied"].map((value) => (
@@ -293,6 +321,6 @@ export function AdminInbox() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }
