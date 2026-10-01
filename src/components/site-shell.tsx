@@ -223,7 +223,7 @@ export function PortfolioHome() {
 
   const sendPrompt = async (promptText?: string) => {
     const text = (promptText ?? chatInput).trim();
-    if (!text) return;
+    if (!text || isChatLoading) return;
 
     setChatMessages((current) => [...current, { role: "user", text }]);
     setChatInput("");
@@ -236,8 +236,14 @@ export function PortfolioHome() {
         body: JSON.stringify({ message: text }),
       });
 
-      const data = await response.json();
-      const answer = data.answer ?? "I don't have that information yet. You can contact Nikhil directly.";
+      const data = (await response.json()) as { answer?: string; error?: string };
+      if (!response.ok) {
+        throw new Error(data.error ?? "The assistant is temporarily unavailable.");
+      }
+
+      const answer = typeof data.answer === "string"
+        ? data.answer
+        : "I don't have that information yet. You can contact Nikhil directly.";
       setChatMessages((current) => [...current, { role: "assistant", text: answer }]);
     } catch {
       setChatMessages((current) => [
@@ -775,9 +781,10 @@ export function PortfolioHome() {
                 <button
                   type="button"
                   onClick={() => void sendPrompt()}
-                  className="rounded-none bg-sky-500 px-3 py-2 text-sm font-medium text-slate-950"
+                  disabled={isChatLoading}
+                  className="rounded-none bg-sky-500 px-3 py-2 text-sm font-medium text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Send
+                  {isChatLoading ? "Sending..." : "Send"}
                 </button>
               </div>
             </div>
