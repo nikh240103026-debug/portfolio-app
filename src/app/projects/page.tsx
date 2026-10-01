@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Globe } from "lucide-react";
 
@@ -20,7 +21,17 @@ export default function ProjectsPage() {
       <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
           <article key={project.slug} className="group overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5">
-            <div className={cn("h-40 border-b border-white/10 bg-gradient-to-br", project.accent)} />
+            <div className={cn("relative h-40 border-b border-white/10 bg-gradient-to-br", project.accent)}>
+              {project.imageUrl ? (
+                <Image
+                  src={project.imageUrl}
+                  alt={`${project.title} dashboard`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  className={project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
+                />
+              ) : null}
+            </div>
             <div className="p-5">
               <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-slate-300">
                 <span>{project.category}</span>

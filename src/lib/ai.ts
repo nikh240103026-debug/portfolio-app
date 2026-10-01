@@ -14,7 +14,7 @@ const knowledgeBase = {
     "C++, Python, JavaScript, TypeScript, React, Next.js, Node.js, PostgreSQL, PyTorch, NumPy, Pandas, Scikit-learn, OpenCV, and more.",
   projects: [
     "Quant-X",
-    "Quantum Learning AI",
+    "QuantumLearn AI",
     "Fraud Transaction Detection",
     "Customer Segmentation System",
     "Loan Prediction",
@@ -68,8 +68,8 @@ export async function getPortfolioAnswer(question: string): Promise<string> {
     return `He is pursuing ${knowledgeBase.program} at ${knowledgeBase.institute}, with specialization in ${knowledgeBase.specialization}.`;
   }
 
-  if (/(what projects|show me his projects|projects has he built|quant-x|quantum learning ai)/.test(q)) {
-    return `His project work includes Quant-X, Quantum Learning AI, Fraud Transaction Detection, Customer Segmentation System, Loan Prediction, Credit Default Risk, and Titanic Survival Predictor.`;
+  if (/(what projects|show me his projects|projects has he built|quant-x|quantum learn(?:ing)? ai|quantumlearn ai)/.test(q)) {
+    return `His project work includes Quant-X, QuantumLearn AI, Fraud Transaction Detection, Customer Segmentation System, Loan Prediction, Credit Default Risk, and Titanic Survival Predictor.`;
   }
 
   if (/(quant-x|tell me about quant-x)/.test(q)) {
@@ -97,7 +97,7 @@ export async function getPortfolioAnswer(question: string): Promise<string> {
   }
 
   if (/(achievement|certification|award)/.test(q)) {
-    return `The portfolio includes achievements and certifications sections with placeholders to be filled in as they become available.`;
+    return `I don't have achievement details to share right now. The portfolio still includes a certifications section.`;
   }
 
   if (process.env.AI_API_KEY && (process.env.AI_PROVIDER ?? "openai") === "openai") {

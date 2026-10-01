@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3f7ff;
+  --background: #f4f7fb;
   --foreground: #0f172a;
   --muted: #475569;
-  --panel: rgba(255, 255, 255, 0.9);
-  --panel-strong: #eff6ff;
-  --border: transparent;
-  --accent: #2563eb;
-  --accent-strong: #1d4ed8;
-  --shadow-soft: rgba(37, 99, 235, 0.08);
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-strong: #eef6ff;
+  --border: rgba(148, 163, 184, 0.14);
+  --accent: #1d4ed8;
+  --accent-strong: #1e3a8a;
+  --shadow-soft: rgba(30, 64, 175, 0.08);
 }
 
 html {
@@ -18,14 +18,14 @@ html {
 }
 
 html.light {
-  --background: #f4f8ff;
+  --background: #f4f7fb;
   --foreground: #0f172a;
   --muted: #475569;
-  --panel: rgba(255, 255, 255, 0.88);
-  --panel-strong: #edf5ff;
-  --border: transparent;
-  --accent: #2563eb;
-  --accent-strong: #1d4ed8;
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-strong: #eef6ff;
+  --border: rgba(148, 163, 184, 0.14);
+  --accent: #1d4ed8;
+  --accent-strong: #1e3a8a;
 }
 
 html.dark {
@@ -34,18 +34,381 @@ html.dark {
   --muted: #94a3b8;
   --panel: rgba(15, 23, 42, 0.82);
   --panel-strong: #0f172a;
-  --border: transparent;
+  --border: rgba(148, 163, 184, 0.12);
   --accent: #60a5fa;
   --accent-strong: #3b82f6;
 }
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(96, 165, 250, 0.17), transparent 26%),
-    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.1), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, #f3f7ff 38%, #eef6ff 100%);
+    radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(30, 64, 175, 0.08), transparent 28%),
+    linear-gradient(180deg, #ffffff 0%, #f4f7fb 40%, #eef6ff 100%);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.ibm-landing {
+  background: #f2f2f2;
+  color: #121212;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.ibm-header {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+.ibm-header-inner {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+}
+
+.ibm-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.ibm-brand-mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  background: #0f172a;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.ibm-brand-name {
+  font-size: 1.2rem;
+  color: #111827;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.ibm-nav {
+  display: flex;
+  align-items: center;
+  gap: 2.35rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.ibm-nav-item {
+  position: relative;
+  font-size: 0.92rem;
+  color: #18181b;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ibm-nav-item::after {
+  content: "▾";
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.ibm-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ibm-icon-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #111827;
+  cursor: pointer;
+}
+
+.ibm-main {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.ibm-hero {
+  padding-top: 1.5rem;
+}
+
+.ibm-hero-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.1fr) minmax(220px, 0.55fr);
+  align-items: end;
+  gap: 1.4rem;
+  min-height: 560px;
+}
+
+.ibm-hero-copy {
+  padding: 2rem 0 1.3rem 0;
+}
+
+.ibm-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.ibm-hero-copy h1 {
+  margin: 0;
+  font-size: clamp(3.6rem, 4.4vw, 6.4rem);
+  line-height: 0.85;
+  letter-spacing: -0.08em;
+  font-weight: 400;
+  color: #d7c6f1;
+  text-wrap: balance;
+}
+
+.ibm-hero-copy h1 span {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.34em;
+  letter-spacing: -0.04em;
+  color: #111827;
+  line-height: 1.15;
+  font-weight: 500;
+}
+
+.ibm-subcopy {
+  margin-top: 1.5rem;
+  max-width: 610px;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #202427;
+}
+
+.ibm-cta-group {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.ibm-primary-cta,
+.ibm-secondary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  padding: 0.9rem 1.35rem;
+  border-radius: 0;
+  border: 1px solid rgba(17, 24, 39, 0.2);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  font-weight: 500;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
+}
+
+.ibm-primary-cta {
+  background: #0f62fe;
+  color: #ffffff;
+  border-color: #0f62fe;
+}
+
+.ibm-secondary-cta {
+  background: transparent;
+  color: #111827;
+  border-color: rgba(17, 24, 39, 0.2);
+}
+
+.ibm-primary-cta:hover,
+.ibm-secondary-cta:hover,
+.ibm-icon-button:hover,
+.ibm-nav-item:hover,
+.ibm-mobile-item:hover,
+.ibm-mini-stats div:hover {
+  background-color: rgba(15, 98, 254, 0.08);
+  color: #0f62fe;
+  border-color: rgba(15, 98, 254, 0.28);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 98, 254, 0.08);
+}
+
+.ibm-primary-cta:hover {
+  background-color: #0a52d6;
+  color: #fff;
+}
+
+.ibm-visual {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.ibm-visual-panel {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  overflow: hidden;
+  border-radius: 0;
+  background: #dfeafc;
+  box-shadow: none;
+  border: none;
+}
+
+.ibm-visual-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.12), transparent 36%, rgba(255,255,255,0.04));
+}
+
+.ibm-visual-grid {
+  display: none;
+}
+
+.ibm-side-card {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem 1.25rem;
+  border-left: 1px solid rgba(17, 24, 39, 0.18);
+  min-height: 470px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ibm-side-card-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.ibm-side-card p {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #111827;
+}
+
+.ibm-side-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.2rem 0 0;
+  display: grid;
+  gap: 0.8rem;
+  color: #374151;
+}
+
+.ibm-side-card li {
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(17, 24, 39, 0.14);
+}
+
+.ibm-mini-stats {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 620px;
+}
+
+.ibm-mini-stats div {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+}
+
+.ibm-mini-stats span {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.ibm-mini-stats strong {
+  color: #111827;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ibm-mobile-nav {
+  border-top: 1px solid rgba(17, 24, 39, 0.14);
+  background: rgba(255,255,255,0.96);
+}
+
+.ibm-mobile-item {
+  display: block;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  padding: 0.9rem 1.5rem;
+  color: #111827;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+html.dark .ibm-landing,
+html.light .ibm-landing {
+  background: #f2f2f2;
+}
+
+@media (max-width: 1200px) {
+  .ibm-hero-body {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .ibm-side-card {
+    border-left: none;
+    border-top: 1px solid rgba(17, 24, 39, 0.18);
+    padding-top: 1.5rem;
+    min-height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a, button, .ibm-mini-stats div {
+    transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, transform 220ms ease, box-shadow 220ms ease;
+  }
+}
+
+@media (max-width: 760px) {
+  .ibm-header-inner {
+    padding: 0 1rem;
+  }
+
+  .ibm-main {
+    padding: 0 1rem 3rem;
+  }
+
+  .ibm-hero-copy h1 {
+    font-size: clamp(2.75rem, 13vw, 5rem);
+  }
+
+  .ibm-subcopy {
+    font-size: 1rem;
+  }
+
+  .ibm-news-header {
+    font-size: 1.6rem;
+  }
 }
 
 html.dark body {
@@ -64,7 +427,6 @@ html.dark body {
 
 * {
   box-sizing: border-box;
-  border-color: transparent !important;
 }
 
 html, body {
@@ -87,8 +449,12 @@ a {
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.18);
   color: #0f172a;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
 }
 
 button,

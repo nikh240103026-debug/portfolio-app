@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Globe, Layers3 } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -28,7 +29,17 @@ export default async function ProjectDetailPage({
       </Link>
 
       <section className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5">
-        <div className="h-56 border-b border-white/10 bg-gradient-to-br from-sky-500/20 via-slate-900 to-slate-950" />
+        <div className="relative h-56 border-b border-white/10 bg-gradient-to-br from-sky-500/20 via-slate-900 to-slate-950">
+          {project.imageUrl ? (
+            <Image
+              src={project.imageUrl}
+              alt={`${project.title} dashboard`}
+              fill
+              sizes="(max-width: 1152px) 100vw, 1152px"
+              className={project.slug === "quant-x" ? "object-cover object-center" : "object-cover object-top"}
+            />
+          ) : null}
+        </div>
         <div className="p-6 sm:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>

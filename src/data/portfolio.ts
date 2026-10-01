@@ -40,7 +40,6 @@ export const navItems = [
   { label: "Skills", href: "#skills" },
   { label: "Projects", href: "#projects" },
   { label: "Experience", href: "#experience" },
-  { label: "Achievements", href: "#achievements" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -71,6 +70,7 @@ export const projects: Project[] = [
   {
     title: "Quant-X",
     slug: "quant-x",
+    imageUrl: "/images/Nikhil%20Raj%E2%80%99s%20Quant-X%20Portfolio.png",
     shortDescription:
       "Production-oriented C++ trading engine focused on matching and market data workflows.",
     description:
@@ -106,8 +106,9 @@ export const projects: Project[] = [
     accent: "from-cyan-500/25 via-sky-500/10 to-transparent",
   },
   {
-    title: "Quantum Learning AI",
+    title: "QuantumLearn AI",
     slug: "quantum-learning-ai",
+    imageUrl: "/images/Screenshot%202026-10-01%20225953.png",
     shortDescription:
       "AI-powered educational platform for quantum computing concepts and interactive learning.",
     description:
@@ -145,6 +146,7 @@ export const projects: Project[] = [
   {
     title: "Fraud Transaction Detection",
     slug: "fraud-detection",
+    imageUrl: "/images/Banking%20Fraud%20Detection%20Showcase.png",
     shortDescription:
       "Machine learning system for identifying suspicious or fraudulent financial transactions.",
     description:
