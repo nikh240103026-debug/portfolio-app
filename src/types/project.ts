@@ -1,0 +1,20 @@
+export type ProjectType = {
+  title: string;
+  slug: string;
+  shortDescription: string;
+  description: string;
+  problem: string;
+  solution: string;
+  architecture: string;
+  technologies: string[];
+  githubUrl: string;
+  liveUrl: string;
+  imageUrl?: string;
+  featured: boolean;
+  category: string;
+  status: string;
+  features: string[];
+  challenges: string[];
+  whatILearned: string[];
+  accent: string;
+};

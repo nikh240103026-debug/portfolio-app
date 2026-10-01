@@ -1,0 +1,12 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" rx="32" fill="#0F172A"/>
+  <rect x="42" y="42" width="516" height="316" rx="24" stroke="#7DD3FC" stroke-opacity="0.5" stroke-dasharray="8 8"/>
+  <circle cx="120" cy="130" r="40" fill="#7DD3FC" fill-opacity="0.14"/>
+  <path d="M101 130L114 143L141 116" stroke="#7DD3FC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="190" y="110" width="250" height="16" rx="8" fill="#E2E8F0" fill-opacity="0.8"/>
+  <rect x="190" y="144" width="210" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.45"/>
+  <rect x="190" y="176" width="260" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.25"/>
+  <rect x="190" y="210" width="180" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.2"/>
+  <rect x="120" y="260" width="360" height="18" rx="9" fill="#7DD3FC" fill-opacity="0.15"/>
+  <text x="300" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#E2E8F0" letter-spacing="3">CERTIFICATE</text>
+</svg>
