@@ -34,18 +34,50 @@ function formatLines(value: string) {
   return escapeHtml(value).replace(/\r?\n/g, "<br>");
 }
 
+function extractEmailAddress(value: string | undefined) {
+  if (!value) return "";
+
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  const match = trimmed.match(/<([^>]+)>/);
+  const candidate = match ? match[1] : trimmed;
+  return candidate.replace(/^['"]|['"]$/g, "").trim();
+}
+
+function isPlaceholderAddress(value: string | undefined) {
+  if (!value) return true;
+  const normalized = value.trim().toLowerCase();
+  return normalized.includes("[add") || normalized.includes("example.com") || normalized.includes("your-inbox") || normalized.includes("replace-with");
+}
+
+function isPersonalEmailAddress(value: string | undefined) {
+  if (!value) return true;
+  return /@(gmail|hotmail|outlook|yahoo|icloud|protonmail|aol)\./i.test(value);
+}
+
 export async function sendContactEmails(message: ContactEmailMessage) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.CONTACT_FROM_EMAIL;
-  const notificationEmail = process.env.CONTACT_NOTIFICATION_EMAIL;
+  const configuredFrom = process.env.CONTACT_FROM_EMAIL;
+  const configuredNotificationEmail = process.env.CONTACT_NOTIFICATION_EMAIL;
+  const senderEmail = extractEmailAddress(configuredFrom);
+  const notificationEmail = extractEmailAddress(configuredNotificationEmail) || senderEmail;
 
-  if (!apiKey?.trim() || !from?.trim() || !notificationEmail?.trim()) {
-    const missingSettings = [
-      !apiKey?.trim() && "RESEND_API_KEY",
-      !from?.trim() && "CONTACT_FROM_EMAIL",
-      !notificationEmail?.trim() && "CONTACT_NOTIFICATION_EMAIL",
-    ].filter((setting): setting is string => Boolean(setting));
-    console.warn(`Contact email automation is disabled; missing ${missingSettings.join(", ")}.`);
+  if (!apiKey?.trim()) {
+    console.warn("Contact email automation is disabled; missing RESEND_API_KEY.");
+    return;
+  }
+
+  if (!senderEmail || isPlaceholderAddress(senderEmail)) {
+    console.warn("Contact email automation is disabled; missing or placeholder CONTACT_FROM_EMAIL.");
+    return;
+  }
+
+  const fallbackFromAddress = isPersonalEmailAddress(senderEmail) ? "onboarding@resend.dev" : senderEmail;
+  const from = configuredFrom?.includes("<") ? configuredFrom.replace(/<([^>]+)>/, `<${fallbackFromAddress}>`) : fallbackFromAddress;
+
+  if (!notificationEmail || isPlaceholderAddress(notificationEmail)) {
+    console.warn("Contact email automation is disabled; missing or placeholder CONTACT_NOTIFICATION_EMAIL.");
     return;
   }
 
@@ -66,6 +98,10 @@ export async function sendContactEmails(message: ContactEmailMessage) {
     .map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`)
     .join("");
 
+  if (fallbackFromAddress !== senderEmail) {
+    console.info("Using Resend test sender while a personal email is configured for the contact form.");
+  }
+
   const results = await Promise.allSettled([
     resend.emails.send({
       from,
@@ -84,10 +120,13 @@ export async function sendContactEmails(message: ContactEmailMessage) {
     }, { idempotencyKey: `contact-notification/${message.id}` }),
   ]);
 
-  if (results.some((result) => result.status === "rejected" || result.value.error)) {
-    const errors = results.map((result) =>
-      result.status === "rejected" ? String(result.reason) : result.value.error?.message,
-    ).filter(Boolean);
+  if (results.some((result) => result.status === "rejected" || Boolean(result.status === "fulfilled" && result.value.error))) {
+    const errors = results.map((result) => {
+      if (result.status === "rejected") {
+        return String(result.reason);
+      }
+      return result.value.error?.message ?? "";
+    }).filter(Boolean);
     console.error("One or more contact emails could not be delivered:", errors);
   }
 }
